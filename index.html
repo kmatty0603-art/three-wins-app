@@ -17,13 +17,12 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,B
 h1{margin:8px 0 4px;font-size:30px}.sub{color:var(--muted);font-size:14px}
 .top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
 .pill{background:var(--soft);color:var(--accent);padding:9px 12px;border-radius:999px;font-weight:700;white-space:nowrap}
-.date{color:var(--accent);font-weight:700;margin:20px 0 12px}
+.date{color:var(--accent);font-weight:700}
 .editor-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:18px 0 12px}
-.editor-head .date{margin:0}
 .card,.entry,.review{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px;margin-bottom:12px}
 label{display:block;color:var(--muted);font-size:13px;margin-bottom:7px}
 textarea{width:100%;min-height:72px;border:0;outline:0;resize:none;background:transparent;font-size:17px;line-height:1.45}
-button{border:0;border-radius:14px;padding:13px;font-weight:700;font-size:15px}
+button{border:0;border-radius:14px;padding:13px;font-weight:700;font-size:15px;-webkit-tap-highlight-color:transparent}
 .primary{width:100%;background:var(--accent);color:white}
 .secondary{background:#fff;border:1px solid var(--line);color:var(--accent)}
 .status{text-align:center;color:var(--accent);min-height:22px;margin:8px}
@@ -33,7 +32,7 @@ button{border:0;border-radius:14px;padding:13px;font-weight:700;font-size:15px}
 .section{font-size:19px;font-weight:700;margin:26px 0 12px}
 .grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
 .dow,.day{text-align:center}.dow{font-size:12px;color:var(--muted);padding:3px}
-.day{aspect-ratio:1;background:#fff;border:1px solid var(--line);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:13px;position:relative}
+.day{aspect-ratio:1;background:#fff;border:1px solid var(--line);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:13px;position:relative;padding:0}
 .day.done{background:var(--soft);color:var(--accent);font-weight:800}
 .day.done:after{content:"✓";position:absolute;right:4px;bottom:1px;font-size:10px}
 .day.future{opacity:.38}
@@ -43,7 +42,7 @@ button{border:0;border-radius:14px;padding:13px;font-weight:700;font-size:15px}
 .entry-date{font-size:13px;color:var(--accent);font-weight:800}
 .entry ol{margin:7px 0 0;padding-left:20px}.entry li{margin:5px 0}
 .row{display:flex;gap:8px}.row>*{flex:1}
-nav{position:fixed;left:50%;transform:translateX(-50%);bottom:10px;width:min(680px,calc(100% - 24px));display:grid;grid-template-columns:repeat(3,1fr);gap:6px;background:rgba(255,255,255,.95);backdrop-filter:blur(16px);border:1px solid var(--line);border-radius:20px;padding:7px;box-shadow:0 8px 24px rgba(0,0,0,.06)}
+nav{position:fixed;left:50%;transform:translateX(-50%);bottom:10px;width:min(680px,calc(100% - 24px));display:grid;grid-template-columns:repeat(3,1fr);gap:6px;background:rgba(255,255,255,.95);backdrop-filter:blur(16px);border:1px solid var(--line);border-radius:20px;padding:7px;box-shadow:0 8px 24px rgba(0,0,0,.06);z-index:20}
 nav button{background:transparent;color:var(--muted)}nav .active{background:var(--soft);color:var(--accent)}
 .view{display:none}.view.active{display:block}.small{font-size:12px;color:var(--muted)}
 .help{background:var(--soft2);border-radius:14px;padding:12px;color:var(--accent);font-size:13px;margin-top:12px}
@@ -59,7 +58,7 @@ nav button{background:transparent;color:var(--muted)}nav .active{background:var(
     <div class="pill" id="streak">0日連続</div>
   </div>
 
-  <section id="today" class="view active">
+  <section id="todayView" class="view active">
     <div class="editor-head">
       <div class="date" id="editDateLabel"></div>
       <button class="secondary" id="todayBtn">今日に戻る</button>
@@ -69,7 +68,7 @@ nav button{background:transparent;color:var(--muted)}nav .active{background:var(
     <div class="card"><label>2つ目</label><textarea id="w2" placeholder="例：昼ごはんをちゃんと食べた"></textarea></div>
     <div class="card"><label>3つ目</label><textarea id="w3" placeholder="例：疲れていたけど5分だけ歩いた"></textarea></div>
 
-    <button class="primary" id="save">この日の3つを保存</button>
+    <button class="primary" id="saveBtn">この日の3つを保存</button>
     <div class="status" id="status"></div>
 
     <div class="stats">
@@ -79,17 +78,17 @@ nav button{background:transparent;color:var(--muted)}nav .active{background:var(
     </div>
   </section>
 
-  <section id="cal" class="view">
+  <section id="calendarView" class="view">
     <div class="monthbar">
-      <button class="secondary" id="prev">‹</button>
-      <b id="ctitle"></b>
-      <button class="secondary" id="next">›</button>
+      <button class="secondary" id="prevBtn">‹</button>
+      <b id="calendarTitle"></b>
+      <button class="secondary" id="nextBtn">›</button>
     </div>
-    <div class="grid" id="grid" style="margin-top:12px"></div>
+    <div class="grid" id="calendarGrid" style="margin-top:12px"></div>
     <div class="help">過去の日付をタップすると、その日の3つを後から記録・編集できます。</div>
   </section>
 
-  <section id="hist" class="view">
+  <section id="historyView" class="view">
     <div class="section" style="margin-top:0">これまでの記録</div>
     <div id="history"></div>
 
@@ -98,154 +97,216 @@ nav button{background:transparent;color:var(--muted)}nav .active{background:var(
 
     <div class="section">バックアップ</div>
     <div class="row">
-      <button class="secondary" id="export">書き出す</button>
-      <button class="secondary" id="import">読み込む</button>
+      <button class="secondary" id="exportBtn">書き出す</button>
+      <button class="secondary" id="importBtn">読み込む</button>
     </div>
-    <input id="file" type="file" accept="application/json" hidden>
+    <input id="importFile" type="file" accept="application/json" hidden>
     <div class="small" style="margin-top:10px">記録はこのiPhone内に保存されます。定期的な書き出しがおすすめです。</div>
   </section>
 </div>
 
 <nav>
-  <button class="active" data-id="today">今日</button>
-  <button data-id="cal">カレンダー</button>
-  <button data-id="hist">記録</button>
+  <button class="active" data-view="todayView">今日</button>
+  <button data-view="calendarView">カレンダー</button>
+  <button data-view="historyView">記録</button>
 </nav>
 
 <script>
-const K="threeWinsRecordsV2", OLD="threeWinsRecordsV1";
+(function(){
+"use strict";
+
+const KEY="threeWinsRecordsV2";
+const OLD_KEY="threeWinsRecordsV1";
+const $=id=>document.getElementById(id);
+
+const el={
+  streak:$("streak"), editDateLabel:$("editDateLabel"), todayBtn:$("todayBtn"),
+  w1:$("w1"), w2:$("w2"), w3:$("w3"), saveBtn:$("saveBtn"), status:$("status"),
+  days:$("days"), wins:$("wins"), best:$("best"),
+  prevBtn:$("prevBtn"), nextBtn:$("nextBtn"), calendarTitle:$("calendarTitle"), calendarGrid:$("calendarGrid"),
+  history:$("history"), review:$("review"), exportBtn:$("exportBtn"), importBtn:$("importBtn"), importFile:$("importFile")
+};
+
 const pad=n=>String(n).padStart(2,"0");
 const key=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
 const now=new Date(); now.setHours(12,0,0,0);
 const todayKey=key(now);
 let selectedKey=todayKey;
-let cm=new Date(now.getFullYear(),now.getMonth(),1);
+let calMonth=new Date(now.getFullYear(),now.getMonth(),1);
 
 function load(){
   try{
-    let v=JSON.parse(localStorage.getItem(K)||"null");
-    if(v) return v;
-    let o=JSON.parse(localStorage.getItem(OLD)||"{}");
-    if(Object.keys(o).length){
-      localStorage.setItem(K,JSON.stringify(o));
-      return o;
+    const v2=JSON.parse(localStorage.getItem(KEY)||"null");
+    if(v2) return v2;
+    const old=JSON.parse(localStorage.getItem(OLD_KEY)||"{}");
+    if(Object.keys(old).length){
+      localStorage.setItem(KEY,JSON.stringify(old));
+      return old;
     }
   }catch(e){}
   return {};
 }
-function saveAll(x){localStorage.setItem(K,JSON.stringify(x))}
+function saveData(data){localStorage.setItem(KEY,JSON.stringify(data))}
 function fromKey(k){return new Date(k+"T12:00:00")}
 function fmtDate(k){return new Intl.DateTimeFormat("ja-JP",{year:"numeric",month:"long",day:"numeric",weekday:"short"}).format(fromKey(k))}
 function isFuture(k){return fromKey(k)>now}
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
 
 function loadSelected(){
-  const a=load()[selectedKey]||["","",""];
-  [w1,w2,w3].forEach((e,i)=>e.value=a[i]||"");
-  editDateLabel.textContent=selectedKey===todayKey ? "今日・"+fmtDate(selectedKey) : fmtDate(selectedKey);
-  todayBtn.style.display=selectedKey===todayKey ? "none" : "inline-block";
-  status.textContent="";
+  const vals=load()[selectedKey]||["","",""];
+  [el.w1,el.w2,el.w3].forEach((node,i)=>node.value=vals[i]||"");
+  el.editDateLabel.textContent=selectedKey===todayKey ? "今日・"+fmtDate(selectedKey) : fmtDate(selectedKey);
+  el.todayBtn.style.display=selectedKey===todayKey ? "none" : "inline-block";
+  el.status.textContent="";
 }
 
 function streaks(){
-  let a=load(), ks=Object.keys(a).filter(k=>(a[k]||[]).filter(Boolean).length===3).sort();
-  let set=new Set(ks), c=0, d=new Date(now);
-  while(set.has(key(d))){c++;d.setDate(d.getDate()-1)}
-  let b=0,r=0,p=null;
-  for(let k of ks){
-    let q=fromKey(k);
-    r=p&&Math.round((q-p)/86400000)===1?r+1:1;
-    b=Math.max(b,r);p=q;
-  }
-  return[c,b]
+  const data=load();
+  const keys=Object.keys(data).filter(k=>(data[k]||[]).filter(Boolean).length===3).sort();
+  const set=new Set(keys);
+  let current=0,d=new Date(now);
+  while(set.has(key(d))){current++;d.setDate(d.getDate()-1)}
+  let best=0,run=0,prev=null;
+  keys.forEach(k=>{
+    const cur=fromKey(k);
+    run=prev&&Math.round((cur-prev)/86400000)===1?run+1:1;
+    best=Math.max(best,run);
+    prev=cur;
+  });
+  return {current,best};
 }
 
-function stats(){
-  let a=load(),pre=`${now.getFullYear()}-${pad(now.getMonth()+1)}-`;
-  let ds=Object.keys(a).filter(k=>k.startsWith(pre)&&(a[k]||[]).filter(Boolean).length===3);
-  let s=streaks();
-  days.textContent=ds.length;
-  wins.textContent=ds.length*3;
-  streak.textContent=s[0]+"日連続";
-  best.textContent=s[1];
+function renderStats(){
+  const data=load();
+  const prefix=`${now.getFullYear()}-${pad(now.getMonth()+1)}-`;
+  const monthKeys=Object.keys(data).filter(k=>k.startsWith(prefix)&&(data[k]||[]).filter(Boolean).length===3);
+  const s=streaks();
+  el.days.textContent=monthKeys.length;
+  el.wins.textContent=monthKeys.length*3;
+  el.streak.textContent=s.current+"日連続";
+  el.best.textContent=s.best;
 }
 
-save.onclick=()=>{
-  if(isFuture(selectedKey)){status.textContent="未来の日付には記録できません。";return}
-  let v=[w1.value.trim(),w2.value.trim(),w3.value.trim()];
-  if(v.some(x=>!x)){status.textContent="3つ全部書いたら保存できます。";return}
-  let a=load();a[selectedKey]=v;saveAll(a);
-  status.textContent=selectedKey===todayKey ? "保存しました。今日はここまでで十分。" : "この日の記録を保存しました。";
-  render();
-};
-
-todayBtn.onclick=()=>{
-  selectedKey=todayKey;
-  switchView("today");
-  loadSelected();
-};
-
-function calendar(){
-  let a=load(),y=cm.getFullYear(),m=cm.getMonth();
-  ctitle.textContent=`${y}年${m+1}月`;
-  grid.innerHTML=["日","月","火","水","木","金","土"].map(x=>`<div class=dow>${x}</div>`).join("");
-  let f=new Date(y,m,1),l=new Date(y,m+1,0);
-  for(let i=0;i<f.getDay();i++)grid.innerHTML+="<div class='day blank'></div>";
-  for(let d=1;d<=l.getDate();d++){
-    let k=key(new Date(y,m,d,12));
-    let ok=(a[k]||[]).filter(Boolean).length===3;
-    let future=isFuture(k);
-    grid.innerHTML+=`<button class='day ${ok?"done":""} ${future?"future":""} ${k===selectedKey?"selected":""}' data-date='${k}' ${future?"disabled":""}>${d}</button>`;
-  }
-  grid.querySelectorAll("[data-date]").forEach(btn=>{
-    btn.onclick=()=>{
-      selectedKey=btn.dataset.date;
-      loadSelected();
-      switchView("today");
+function renderCalendar(){
+  const data=load();
+  const y=calMonth.getFullYear(),m=calMonth.getMonth();
+  el.calendarTitle.textContent=`${y}年${m+1}月`;
+  el.calendarGrid.innerHTML=["日","月","火","水","木","金","土"].map(x=>`<div class="dow">${x}</div>`).join("");
+  const first=new Date(y,m,1),last=new Date(y,m+1,0);
+  for(let i=0;i<first.getDay();i++) el.calendarGrid.insertAdjacentHTML("beforeend","<div class='day blank'></div>");
+  for(let d=1;d<=last.getDate();d++){
+    const k=key(new Date(y,m,d,12));
+    const done=(data[k]||[]).filter(Boolean).length===3;
+    const future=isFuture(k);
+    const b=document.createElement("button");
+    b.type="button";
+    b.className=`day ${done?"done":""} ${future?"future":""} ${k===selectedKey?"selected":""}`;
+    b.textContent=d;
+    b.disabled=future;
+    if(!future){
+      b.addEventListener("click",()=>{
+        selectedKey=k;
+        loadSelected();
+        switchView("todayView");
+      });
     }
+    el.calendarGrid.appendChild(b);
+  }
+}
+
+function renderHistory(){
+  const entries=Object.entries(load()).sort((a,b)=>b[0].localeCompare(a[0]));
+  if(!entries.length){el.history.innerHTML="<div class='small'>まだ記録はありません。</div>";return}
+  el.history.innerHTML="";
+  entries.forEach(([date,items])=>{
+    const box=document.createElement("div");
+    box.className="entry";
+    box.innerHTML=`<div class="entry-date">${fmtDate(date)}</div><ol>${items.filter(Boolean).map(x=>`<li>${esc(x)}</li>`).join("")}</ol>`;
+    box.addEventListener("click",()=>{selectedKey=date;loadSelected();switchView("todayView")});
+    el.history.appendChild(box);
   });
 }
-prev.onclick=()=>{cm=new Date(cm.getFullYear(),cm.getMonth()-1,1);calendar()}
-next.onclick=()=>{cm=new Date(cm.getFullYear(),cm.getMonth()+1,1);calendar()}
 
-function esc(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
-function historyR(){
-  let a=load(),e=Object.entries(a).sort((x,y)=>y[0].localeCompare(x[0]));
-  history.innerHTML=e.length?e.map(([d,v])=>`<div class=entry data-edit='${d}'><div class=entry-date>${fmtDate(d)}</div><ol>${v.filter(Boolean).map(x=>`<li>${esc(x)}</li>`).join("")}</ol></div>`).join(""):"<div class=small>まだ記録はありません。</div>";
-  history.querySelectorAll("[data-edit]").forEach(el=>{
-    el.onclick=()=>{selectedKey=el.dataset.edit;loadSelected();switchView("today")}
-  })
+function renderReview(){
+  const data=load();
+  const prefix=`${now.getFullYear()}-${pad(now.getMonth()+1)}-`;
+  const entries=Object.entries(data).filter(([k])=>k.startsWith(prefix));
+  const items=entries.flatMap(x=>(x[1]||[]).filter(Boolean));
+  el.review.innerHTML=items.length
+    ? `今月は<b>${entries.length}日</b>記録し、<b>${items.length}個</b>の「できたこと」を残しました。`
+    : "今月の記録がたまると、ここに振り返りが表示されます。";
 }
-function reviewR(){
-  let a=load(),pre=`${now.getFullYear()}-${pad(now.getMonth()+1)}-`;
-  let e=Object.entries(a).filter(([k])=>k.startsWith(pre)),items=e.flatMap(x=>x[1].filter(Boolean));
-  review.innerHTML=items.length?`今月は<b>${e.length}日</b>記録し、<b>${items.length}個</b>の「できたこと」を残しました。数字にしなくても、ちゃんと積み上がっています。`:"今月の記録がたまると、ここに振り返りが表示されます。";
-}
+
+function renderAll(){renderStats();renderCalendar();renderHistory();renderReview()}
+
 function switchView(id){
   document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
-  document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
-  document.querySelector(`nav button[data-id="${id}"]`).classList.add("active");
-  render();
+  document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
+  const target=$(id);
+  if(target) target.classList.add("active");
+  const navBtn=document.querySelector(`nav button[data-view="${id}"]`);
+  if(navBtn) navBtn.classList.add("active");
+  if(id==="calendarView") renderCalendar();
+  if(id==="historyView"){renderHistory();renderReview()}
+  window.scrollTo({top:0,behavior:"instant"});
 }
-document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>switchView(b.dataset.id));
 
-export.onclick=()=>{
-  let blob=new Blob([JSON.stringify(load(),null,2)],{type:"application/json"});
-  let a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=`three-wins-${todayKey}.json`;a.click();
-};
-import.onclick=()=>file.click();
-file.onchange=e=>{
-  let f=e.target.files[0],r=new FileReader();
+el.saveBtn.addEventListener("click",()=>{
+  if(isFuture(selectedKey)){el.status.textContent="未来の日付には記録できません。";return}
+  const vals=[el.w1.value.trim(),el.w2.value.trim(),el.w3.value.trim()];
+  if(vals.some(v=>!v)){el.status.textContent="3つ全部書いたら保存できます。";return}
+  const data=load();
+  data[selectedKey]=vals;
+  saveData(data);
+  el.status.textContent=selectedKey===todayKey?"保存しました。今日はここまでで十分。":"この日の記録を保存しました。";
+  renderAll();
+});
+
+el.todayBtn.addEventListener("click",()=>{
+  selectedKey=todayKey;
+  loadSelected();
+  switchView("todayView");
+});
+
+el.prevBtn.addEventListener("click",()=>{calMonth=new Date(calMonth.getFullYear(),calMonth.getMonth()-1,1);renderCalendar()});
+el.nextBtn.addEventListener("click",()=>{calMonth=new Date(calMonth.getFullYear(),calMonth.getMonth()+1,1);renderCalendar()});
+
+document.querySelectorAll("nav button").forEach(btn=>{
+  btn.addEventListener("click",()=>switchView(btn.dataset.view));
+});
+
+el.exportBtn.addEventListener("click",()=>{
+  const blob=new Blob([JSON.stringify(load(),null,2)],{type:"application/json"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download=`three-wins-${todayKey}.json`;
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),500);
+});
+
+el.importBtn.addEventListener("click",()=>el.importFile.click());
+el.importFile.addEventListener("change",e=>{
+  const f=e.target.files[0];
+  if(!f) return;
+  const r=new FileReader();
   r.onload=()=>{
-    try{saveAll(JSON.parse(r.result));loadSelected();render();alert("読み込みました")}
-    catch(_){alert("読み込み失敗")}
+    try{
+      const data=JSON.parse(r.result);
+      saveData(data);
+      loadSelected();renderAll();
+      alert("バックアップを読み込みました。");
+    }catch(err){alert("読み込みに失敗しました。")}
   };
-  r.readAsText(f)
-};
+  r.readAsText(f);
+});
 
-function render(){stats();calendar();historyR();reviewR()}
-loadSelected();render();
-if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js");
+loadSelected();
+renderAll();
+
+if("serviceWorker" in navigator){
+  navigator.serviceWorker.register("./sw.js").catch(()=>{});
+}
+})();
 </script>
 </body>
 </html>
