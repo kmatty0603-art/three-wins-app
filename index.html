@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f6f4ef">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="今日できたこと">
+  <link rel="manifest" href="manifest.json">
+  <title>今日できたこと</title>
+  <style>
+    :root{
+      --bg:#f6f4ef; --card:#ffffff; --text:#202124; --muted:#747474;
+      --line:#e9e5dc; --accent:#2f6f57; --danger:#9a3d3d;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; background:var(--bg); color:var(--text);
+      font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;
+      min-height:100vh;
+    }
+    .wrap{max-width:680px;margin:0 auto;padding:24px 18px 48px}
+    h1{font-size:30px;line-height:1.2;margin:20px 0 6px}
+    .sub{color:var(--muted);margin-bottom:24px;font-size:15px}
+    .date{font-weight:600;color:var(--accent);margin-bottom:14px}
+    .card{
+      background:var(--card); border:1px solid var(--line); border-radius:20px;
+      padding:16px; margin-bottom:14px; box-shadow:0 4px 16px rgba(0,0,0,.04)
+    }
+    label{display:block;font-size:14px;color:var(--muted);margin-bottom:8px}
+    textarea{
+      width:100%; min-height:76px; resize:none; border:0; outline:none;
+      font-size:18px; line-height:1.5; background:transparent; color:var(--text)
+    }
+    button{
+      width:100%; border:0; border-radius:16px; padding:15px 18px;
+      font-size:17px; font-weight:700; cursor:pointer
+    }
+    .save{background:var(--accent);color:white;margin-top:4px}
+    .ghost{background:transparent;color:var(--accent);border:1px solid var(--line);margin-top:10px}
+    .status{min-height:24px;text-align:center;color:var(--accent);font-size:14px;margin-top:10px}
+    .history{margin-top:28px}
+    .history h2{font-size:18px;margin-bottom:12px}
+    .entry{
+      background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:10px
+    }
+    .entry-date{font-weight:700;font-size:14px;margin-bottom:8px;color:var(--accent)}
+    .entry ol{margin:0;padding-left:22px}
+    .entry li{margin:6px 0;line-height:1.5}
+    .empty{color:var(--muted);font-size:14px}
+    .footer{color:var(--muted);font-size:12px;text-align:center;margin-top:28px}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <h1>今日できたこと</h1>
+  <div class="sub">反省は書かない。できたことを3つだけ。</div>
+  <div class="date" id="today"></div>
+
+  <div class="card">
+    <label for="w1">1つ目</label>
+    <textarea id="w1" placeholder="例：面倒なメールを返した"></textarea>
+  </div>
+  <div class="card">
+    <label for="w2">2つ目</label>
+    <textarea id="w2" placeholder="例：昼ごはんをちゃんと食べた"></textarea>
+  </div>
+  <div class="card">
+    <label for="w3">3つ目</label>
+    <textarea id="w3" placeholder="例：疲れていたけど5分だけ歩いた"></textarea>
+  </div>
+
+  <button class="save" id="saveBtn">今日の3つを保存</button>
+  <button class="ghost" id="clearBtn">今日の入力を消す</button>
+  <div class="status" id="status"></div>
+
+  <section class="history">
+    <h2>これまでの記録</h2>
+    <div id="historyList"></div>
+  </section>
+
+  <div class="footer">データはこの端末のブラウザ内に保存されます。</div>
+</div>
+
+<script>
+const KEY = "threeWinsRecordsV1";
+const d = new Date();
+const pad = n => String(n).padStart(2,"0");
+const dateKey = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const jpDate = new Intl.DateTimeFormat("ja-JP",{year:"numeric",month:"long",day:"numeric",weekday:"short"}).format(d);
+document.getElementById("today").textContent = jpDate;
+
+function loadAll(){
+  try { return JSON.parse(localStorage.getItem(KEY) || "{}"); } catch(e){ return {}; }
+}
+function saveAll(data){ localStorage.setItem(KEY, JSON.stringify(data)); }
+
+function loadToday(){
+  const all = loadAll();
+  const vals = all[dateKey] || ["","",""];
+  ["w1","w2","w3"].forEach((id,i)=>document.getElementById(id).value = vals[i] || "");
+}
+
+function renderHistory(){
+  const all = loadAll();
+  const list = document.getElementById("historyList");
+  const entries = Object.entries(all).sort((a,b)=>b[0].localeCompare(a[0]));
+  if(!entries.length){
+    list.innerHTML = '<div class="empty">まだ記録はありません。</div>';
+    return;
+  }
+  list.innerHTML = entries.map(([date,items]) => {
+    const nice = new Intl.DateTimeFormat("ja-JP",{year:"numeric",month:"short",day:"numeric",weekday:"short"}).format(new Date(date+"T12:00:00"));
+    const lis = items.filter(Boolean).map(x=>`<li>${escapeHtml(x)}</li>`).join("");
+    return `<div class="entry"><div class="entry-date">${nice}</div><ol>${lis}</ol></div>`;
+  }).join("");
+}
+
+function escapeHtml(s){
+  return s.replace(/[&<>"']/g, m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[m]));
+}
+
+document.getElementById("saveBtn").addEventListener("click",()=>{
+  const vals = ["w1","w2","w3"].map(id=>document.getElementById(id).value.trim());
+  if(vals.some(v=>!v)){
+    document.getElementById("status").textContent = "3つ全部書いたら保存できます。";
+    return;
+  }
+  const all = loadAll();
+  all[dateKey] = vals;
+  saveAll(all);
+  document.getElementById("status").textContent = "保存しました。今日も十分やっています。";
+  renderHistory();
+});
+
+document.getElementById("clearBtn").addEventListener("click",()=>{
+  ["w1","w2","w3"].forEach(id=>document.getElementById(id).value="");
+  document.getElementById("status").textContent = "";
+});
+
+loadToday();
+renderHistory();
+
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("./sw.js").catch(()=>{});
+}
+</script>
+</body>
+</html>
